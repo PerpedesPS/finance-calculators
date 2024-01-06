@@ -1,0 +1,91 @@
+import math
+
+
+def calculate_investment(P, r, t, interest):
+    """Calculates the investment amount based on user inputs."""
+    try:
+        if interest.lower() == 'simple':
+            A = P * (1 + r * t)
+        elif interest.lower() == 'compound':
+            A = P * math.pow((1 + r), t)
+        else:
+            raise ValueError("Invalid interest type. Please enter either 'simple' or 'compound'.")
+    except ValueError as e:
+        print(e)
+        A = float('nan')
+    return A
+
+
+def calculate_bond(P, i, n):
+    """Calculates the monthly bond repayment amount based on user inputs."""
+    try:
+        repayment = (i * P) / (1 - math.pow((1 + i), -n))
+    except ZeroDivisionError as e:
+        print("Cannot divide by zero. Please enter a non-zero value for 'n'.")
+        repayment = float('nan')
+    except ValueError as e:
+        print(e)
+        repayment = float('nan')
+    return repayment
+
+
+# Display menu
+print("Welcome to the Investment/Bond Calculator.\n")
+print("Enter 'investment' to calculate the amount of interest you'll earn on your investment.")
+print("Enter 'bond' to calculate the amount you'll have to pay on a home loan.\n")
+
+while True:
+    # Get user input and convert to lowercase
+    user_input = input("Please select an option ('investment' or 'bond'): ").lower()
+
+    # Check if user input is valid
+    if user_input not in ['investment', 'bond']:
+        print("Invalid option. Please enter either 'investment' or 'bond'.")
+        continue
+
+    if user_input == 'investment':
+        # Get user inputs for investment calculation
+        P = input("Enter the amount of money you would like to deposit: ")
+        r = input("Enter the interest rate (as a percentage): ")
+        t = input("Enter the number of years you plan on investing: ")
+        interest = input("Enter the type of interest (simple/compound): ")
+
+        # Validate user inputs
+        try:
+            P = float(P)
+            r = float(r) / 100
+            t = int(t)
+        except ValueError as e:
+            print("Invalid input. Please enter a valid number for all fields.")
+            continue
+
+        # Calculate investment and display result
+        A = calculate_investment(P, r, t, interest)
+        if not math.isnan(A):
+            print("The total amount after applying {} interest is: {:.2f}\n".format(interest, A))
+
+    elif user_input == 'bond':
+        # Get user inputs for bond calculation
+        P = input("Enter the present value of the house: ")
+        i = input("Enter the interest rate (as a percentage): ")
+        n = input("Enter the number of months to repay the bond: ")
+
+        # Validate user inputs
+        try:
+            P = float(P)
+            i = (float(i) / 100) / 12
+            n = int(n)
+        except ValueError as e:
+            print("Invalid input. Please enter a valid number for all fields.")
+            continue
+
+        # Calculate bond repayment amount and display result
+        repayment = calculate_bond(P, i, n)
+        if not math.isnan(repayment):
+            print("The amount to be repaid each month is: {:.2f}\n".format(repayment))
+
+    # Ask user if they want to perform another calculation
+    another_calc = input("Do you want to perform another calculation? (y/n): ")
+    if another_calc.lower() != 'y':
+        print("Thanks for using the Investment/Bond Calculator. Goodbye!")
+        break
